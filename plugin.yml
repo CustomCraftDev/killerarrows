@@ -1,0 +1,32 @@
+name: Killer Arrows
+main: killerarrows.Killerarrows
+description: Requested Plugin by undeaD_D
+version: 1.0
+author: DieFriiks
+authors: [DieFriiks, CustomCraftDev, undeaD_D]
+databse: false
+commands:
+  ohko:
+    usage: /<command> <reload/disable/reset/give> [<player>]
+    description: Give yourself or a player a One Hit K.O. arrow.
+permissions:
+  ohko.*:
+    description: give OHKO Arrow to yourself
+    children:
+      ohko.give.self: true
+	  ohko.give.others: true
+	  ohko.give.craft: true
+  ohko.give.self:
+    description: give OHKO Arrow to yourself
+  ohko.give.others:
+    description: give OHKO Arrow to <player>
+    children:
+      ohko.give.self: true
+  ohko.craft:
+    description: allows you to craft an OHKO Arrow
+  ohko.reload:
+    description: reload the OHKO plugin
+  ohko.reset:
+    description: reset the OHKO config
+  ohko.disable:
+    description: disable the OHKO plugin till next server reload
