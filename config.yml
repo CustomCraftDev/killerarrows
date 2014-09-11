@@ -11,10 +11,14 @@ arrow-cost: 100.0
 all-arrows: false
 arrow-damage: 20
 
-disabled-entities:
+blacklisted-entities:
   - ENDERCRYSTAL
   - ENDERDRAGON
   - ENDERDRAGONPART
   - GIANT
   - WITHER
   - WITHERSKULL
+blacklisted-players:
+  - undeaD_D
+  - undeaD_Bot
+  - Notch
