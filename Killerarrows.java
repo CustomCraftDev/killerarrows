@@ -12,6 +12,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -123,12 +124,15 @@ public class Killerarrows extends JavaPlugin {
      * give player ohko arrow
      */
 	private void give(Player p) {
-		ItemStack arrow = new ItemStack(Material.ARROW, 1, (short) 1);
+		ItemStack arrow = new ItemStack(Material.ARROW, 1);
+		arrow.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 10);
+		ItemMeta m = arrow.getItemMeta();
 			List<String> lore = new ArrayList<String>();
 			lore.add(ChatColor.GRAY + "When you hit someone with this arrow with a bow,");
 			lore.add(ChatColor.GRAY + "they will die instantly!");
-		arrow.getItemMeta().setLore(lore);
-		arrow.getItemMeta().setDisplayName(ChatColor.RED + "OHKO Arrow");
+		m.setLore(lore);
+		m.setDisplayName(ChatColor.RED + "OHKO Arrow");
+		arrow.setItemMeta(m);
 		p.getInventory().addItem(arrow);
 	}
 
