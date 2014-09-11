@@ -11,10 +11,12 @@ TODO:
   - crafting event
   - saving player with arrow equipped in config ondisable()
   - charge money on normal shot too ( i dont like this feature :/ )
-  - testing
+  - code optimizations
+  - testing the plugin
   - testing with economy :P
 
 ======
+
 download: 
 COMMING SOON
 pw: PapiDimmi 
