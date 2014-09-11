@@ -6,12 +6,10 @@ requested Plugin
 
 for: PapiDimmi                                                        
 ======
-UPDATE:
-  - Economy hooked (Vault)
-  - Commands all working
-  - Permissions all working
-  - Config working
-  - 
+TODO:
+  - crafting event
+  - saving player with arrow equipped in config ondisable()
+  - charge money on normal shot too ( i dont like this feature :/ )
 ======
 download: 
 COMMING SOON
