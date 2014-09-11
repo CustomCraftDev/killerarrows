@@ -4,6 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
+import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -13,6 +17,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -27,14 +32,34 @@ public class Killerarrows extends JavaPlugin {
     Boolean debug;
     List<String> bl_mobs;
     List<String> bl_players;
-    
+	boolean crafting;
+	int arrowcost;
+	double arrowdamage;
+	boolean allarrowsohko;
+	Material[] craft;
+	Economy economy;
+	boolean useeco;
+	String msg_eco;
+	String msg_arrow;
+	ArrayList<Player> players;
+	String msg_arrow_equip;
+	String msg_arrow_dequip;
+	String msg_arrow_shot;
+	
 	
 	/**
      * on Plugin enable
      */
 	public void onEnable() {
+		players = new ArrayList<Player>();
+		
 		loadConfig();
     	say("Config loaded");
+    	
+    	useeco = setupEconomy();
+    	if(useeco){
+    		say("Vault hooked");
+    	}
     	
     	new EventListener(this);
     	say("Eventlistener loaded");
@@ -53,10 +78,10 @@ public class Killerarrows extends JavaPlugin {
      * on Command
      * @param sender - command sender
      * @param cmd - command
-     * @param label
+     * @param alias
      * @return true or false
      */
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
 		if ((sender instanceof Player)) {
 			Player p = (Player)sender;
 
@@ -68,13 +93,13 @@ public class Killerarrows extends JavaPlugin {
 						if(p.hasPermission("ohko.give.others")){
 							Player target = this.getServer().getPlayer(args[1]);
 							if(target != null && target.isOnline()){
-							  give(target);
+							  return give(target);
 							}
 						}
 					}
 					else{
 						if(p.hasPermission("ohko.give.self")){
-							give(p);
+							return give(p);
 						}
 					}
 				}
@@ -119,21 +144,54 @@ public class Killerarrows extends JavaPlugin {
 		return false;
 	}
 	
+    private boolean setupEconomy()
+    {
+    	try{
+	        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+	        if (economyProvider != null) {
+	            economy = economyProvider.getProvider();
+	        }
+        }catch(Exception e){
+        	if(debug){
+        		e.printStackTrace();
+        	}
+        }
+        return (economy != null);
+    }
 	
+    
 	/**
      * give player ohko arrow
      */
-	private void give(Player p) {
+	private boolean give(Player p) {
+		EconomyResponse response = economy.withdrawPlayer(p, arrowcost);
+		if(response.type.equals(ResponseType.FAILURE) || response.type.equals(ResponseType.NOT_IMPLEMENTED)){
+			p.sendMessage(msg_eco);
+			return false;
+		}
+		else{
+			arrow(p);
+			return true;
+		}
+	}
+
+	
+	/**
+     * add arrow to player inventory
+     */
+	public void arrow(Player p) {
 		ItemStack arrow = new ItemStack(Material.ARROW, 1);
 		arrow.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 10);
 		ItemMeta m = arrow.getItemMeta();
-			List<String> lore = new ArrayList<String>();
-			lore.add(ChatColor.GRAY + "When you hit someone with this arrow with a bow,");
-			lore.add(ChatColor.GRAY + "they will die instantly!");
-		m.setLore(lore);
-		m.setDisplayName(ChatColor.RED + "OHKO Arrow");
-		arrow.setItemMeta(m);
-		p.getInventory().addItem(arrow);
+				List<String> lore = new ArrayList<String>();
+				lore.add(ChatColor.GRAY + "When you hit someone with this arrow with a bow,");
+				lore.add(ChatColor.GRAY + "they will die instantly!");
+				lore.add(ChatColor.GRAY + "rightclick to equip/unequip");
+			m.setLore(lore);
+			m.setDisplayName(ChatColor.RED + "OHKO Arrow");
+			arrow.setItemMeta(m);
+			p.getInventory().addItem(arrow);
+			p.sendMessage(msg_arrow);
 	}
 
 
@@ -145,6 +203,35 @@ public class Killerarrows extends JavaPlugin {
 		config = getConfig();
 		config.options().copyDefaults(true);
 		saveConfig();
+		
+		allarrowsohko = config.getBoolean("all-arrows");
+		arrowdamage = config.getDouble("arrow-damage");
+		arrowcost = config.getInt("arrow-cost");
+		msg_eco = config.getString("");
+		msg_arrow = config.getString("");
+		msg_arrow_equip = config.getString("msg-arrow-equip");
+		msg_arrow_dequip = config.getString("msg-arrow-dequip");
+		msg_arrow_shot = config.getString("msg-arrow-shot");
+		
+		crafting = config.getBoolean("enable-crafting");
+		if(crafting){
+			craft = new Material[9];
+			String s1[] = config.getString("craft1").split(" ");
+			String s2[] = config.getString("craft2").split(" ");
+			String s3[] = config.getString("craft3").split(" ");
+				craft[0] = Material.matchMaterial(s1[0]);
+				craft[1] = Material.matchMaterial(s1[1]);
+				craft[2] = Material.matchMaterial(s1[2]);
+				craft[3] = Material.matchMaterial(s2[0]);
+				craft[4] = Material.matchMaterial(s2[1]);
+				craft[5] = Material.matchMaterial(s2[2]);
+				craft[6] = Material.matchMaterial(s3[0]);
+				craft[7] = Material.matchMaterial(s3[1]);
+				craft[8] = Material.matchMaterial(s3[2]);
+			s1 = null;
+			s2 = null;
+			s3 = null;
+		}
 
 		debug = config.getBoolean("debug");
 		bl_mobs = (List<String>) config.getStringList("blacklisted-entities");
@@ -161,6 +248,13 @@ public class Killerarrows extends JavaPlugin {
  	   		// Remove unused variables and objects
 			    config = null;
 			    debug = null;
+			    
+			    craft = null;
+				msg_eco = null;
+				msg_arrow = null;
+				msg_arrow_equip = null;
+				msg_arrow_dequip = null;
+				msg_arrow_shot = null;
 			    
 			    bl_mobs = null;
 			    bl_players = null;
