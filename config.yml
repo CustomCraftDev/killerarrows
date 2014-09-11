@@ -1,0 +1,20 @@
+# @author DieFriiks / CustomCraftDev / undeaD_D
+# @link www.custom-craft.de
+# @github https://github.com/CustomCraftDev/killerarrows
+
+enable-crafting: true
+craft1: AIR DIAMOND AIR
+craft2: AIR STICK AIR
+craft3: AIR  FEATHER AIR
+
+arrow-cost: 100.0
+all-arrows: false
+arrow-damage: 20
+
+disabled-entities:
+  - ENDERCRYSTAL
+  - ENDERDRAGON
+  - ENDERDRAGONPART
+  - GIANT
+  - WITHER
+  - WITHERSKULL
