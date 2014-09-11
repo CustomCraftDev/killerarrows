@@ -4,12 +4,16 @@ killerarrows
 OneHit K.O.                                       
 requested Plugin                                                   
 
-for: PapiDimmi                                                        
+for: PapiDimmi    
+
 ======
 TODO:
   - crafting event
   - saving player with arrow equipped in config ondisable()
   - charge money on normal shot too ( i dont like this feature :/ )
+  - testing
+  - testing with economy :P
+
 ======
 download: 
 COMMING SOON
