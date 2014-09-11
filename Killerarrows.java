@@ -1,13 +1,17 @@
 package killerarrows;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -118,9 +122,14 @@ public class Killerarrows extends JavaPlugin {
 	/**
      * give player ohko arrow
      */
-	private void give(Player target) {
-		// TODO Auto-generated method stub
-		
+	private void give(Player p) {
+		ItemStack arrow = new ItemStack(Material.ARROW, 1, (short) 1);
+			List<String> lore = new ArrayList<String>();
+			lore.add(ChatColor.GRAY + "When you hit someone with this arrow with a bow,");
+			lore.add(ChatColor.GRAY + "they will die instantly!");
+		arrow.getItemMeta().setLore(lore);
+		arrow.getItemMeta().setDisplayName(ChatColor.RED + "OHKO Arrow");
+		p.getInventory().addItem(arrow);
 	}
 
 
@@ -156,7 +165,7 @@ public class Killerarrows extends JavaPlugin {
 			    System.gc();
 			
 			// load everything again
-				this.reloadConfig();
+				reloadConfig();
 				loadConfig();
 			
  	   	} catch (Exception e) {
