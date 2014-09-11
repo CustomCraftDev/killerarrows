@@ -106,7 +106,7 @@ public class Killerarrows extends JavaPlugin {
 		
 		// commands from console
 		else{
-			System.out.println("[Randomgive] Command ingame only ...");
+			System.out.println("[KillerArrows] Command ingame only ...");
 			return true;
 		}
 		
@@ -173,7 +173,7 @@ public class Killerarrows extends JavaPlugin {
      */
 	public void say(String out) {
 		if(debug){
-			System.out.println("[Randomgive] " + out);
+			System.out.println("[KillerArrows] " + out);
 		}
 	}	
 }
