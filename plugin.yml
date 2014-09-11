@@ -14,8 +14,8 @@ permissions:
     description: give OHKO Arrow to yourself
     children:
       ohko.give.self: true
-	  ohko.give.others: true
-	  ohko.give.craft: true
+      ohko.give.others: true
+      ohko.give.craft: true
   ohko.give.self:
     description: give OHKO Arrow to yourself
   ohko.give.others:
