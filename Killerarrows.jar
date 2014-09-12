@@ -14,8 +14,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -29,29 +31,34 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Killerarrows extends JavaPlugin {
 	
     FileConfiguration config;
-    Boolean debug;
-    List<String> bl_mobs;
-    List<String> bl_players;
-	boolean crafting;
-	int arrowcost;
-	double arrowdamage;
-	boolean allarrowsohko;
 	Material[] craft;
 	Economy economy;
+	ItemStack arrow;
+	
+    boolean debug;
+	boolean allarrowsohko;
+	boolean allarrowscost;
+	boolean crafting;
 	boolean useeco;
+	int arrowcost;
+	double arrowdamage;
+	
 	String msg_eco;
 	String msg_arrow;
-	ArrayList<Player> players;
 	String msg_arrow_equip;
 	String msg_arrow_dequip;
 	String msg_arrow_shot;
 	
+	List<String> players;
+	List<String> bl_player;
+	ArrayList<EntityType> bl_entity;
+	List<String> bl_entity_config;
+
 	
 	/**
      * on Plugin enable
      */
 	public void onEnable() {
-		players = new ArrayList<Player>();
 		
 		loadConfig();
     	say("Config loaded");
@@ -70,10 +77,10 @@ public class Killerarrows extends JavaPlugin {
      * on Plugin disable
      */
 	public void onDisable() {
-
+		config.set("players", players);
 	}
 
-	
+
 	/**
      * on Command
      * @param sender - command sender
@@ -170,28 +177,10 @@ public class Killerarrows extends JavaPlugin {
 			return false;
 		}
 		else{
-			arrow(p);
-			return true;
-		}
-	}
-
-	
-	/**
-     * add arrow to player inventory
-     */
-	public void arrow(Player p) {
-		ItemStack arrow = new ItemStack(Material.ARROW, 1);
-		arrow.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 10);
-		ItemMeta m = arrow.getItemMeta();
-				List<String> lore = new ArrayList<String>();
-				lore.add(ChatColor.GRAY + "When you hit someone with this arrow with a bow,");
-				lore.add(ChatColor.GRAY + "they will die instantly!");
-				lore.add(ChatColor.GRAY + "rightclick to equip/unequip");
-			m.setLore(lore);
-			m.setDisplayName(ChatColor.RED + "OHKO Arrow");
-			arrow.setItemMeta(m);
 			p.getInventory().addItem(arrow);
 			p.sendMessage(msg_arrow);
+			return true;
+		}
 	}
 
 
@@ -204,7 +193,8 @@ public class Killerarrows extends JavaPlugin {
 		config.options().copyDefaults(true);
 		saveConfig();
 		
-		allarrowsohko = config.getBoolean("all-arrows");
+		allarrowsohko = config.getBoolean("all-arrows-ohko");
+		allarrowscost = config.getBoolean("all-arrows-cost");
 		arrowdamage = config.getDouble("arrow-damage");
 		arrowcost = config.getInt("arrow-cost");
 		msg_eco = config.getString("");
@@ -231,12 +221,31 @@ public class Killerarrows extends JavaPlugin {
 			s1 = null;
 			s2 = null;
 			s3 = null;
+			
+			arrow = new ItemStack(Material.ARROW, 1);
+			arrow.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 10);
+			ItemMeta m = arrow.getItemMeta();
+					List<String> lore = new ArrayList<String>();
+					lore.add(ChatColor.GRAY + "When you hit someone with this arrow with a bow,");
+					lore.add(ChatColor.GRAY + "they will die instantly!");
+					lore.add(ChatColor.GRAY + "rightclick to equip/unequip");
+				m.setLore(lore);
+				m.setDisplayName(ChatColor.RED + "OHKO Arrow");
+				arrow.setItemMeta(m);
+			
+			ShapedRecipe arrowrecipe = new ShapedRecipe(arrow).shape("abc", "def", "ghi").setIngredient('a', craft[0]).setIngredient('b', craft[1]).setIngredient('c', craft[2]).
+					setIngredient('d', craft[3]).setIngredient('e', craft[4]).setIngredient('f', craft[5]).setIngredient('g', craft[6]).setIngredient('h', craft[7]).setIngredient('i', craft[8]);
+					getServer().addRecipe(arrowrecipe);
 		}
 
 		debug = config.getBoolean("debug");
-		bl_mobs = (List<String>) config.getStringList("blacklisted-entities");
-		bl_players = (List<String>) config.getStringList("blacklisted-players");
-
+		bl_entity_config = (List<String>) config.getStringList("blacklisted-entities");
+		for(int i = 0; i < bl_entity_config.size(); i++){
+			bl_entity.add(EntityType.valueOf(bl_entity_config.get(i)));
+		}
+		bl_player = (List<String>) config.getStringList("blacklisted-players");
+		
+		players = config.getStringList("players");
 	}
 	   
     
@@ -247,17 +256,19 @@ public class Killerarrows extends JavaPlugin {
  	   	try {
  	   		// Remove unused variables and objects
 			    config = null;
-			    debug = null;
-			    
+			    economy = null;
 			    craft = null;
+			    
 				msg_eco = null;
 				msg_arrow = null;
 				msg_arrow_equip = null;
 				msg_arrow_dequip = null;
 				msg_arrow_shot = null;
 			    
-			    bl_mobs = null;
-			    bl_players = null;
+			    bl_entity_config = null;
+				players = null;
+				bl_player = null;
+				bl_entity = null;
 
 			// Run java garbage collector to delete unused things
 			    System.gc();
