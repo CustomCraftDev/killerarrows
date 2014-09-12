@@ -1,5 +1,8 @@
 package killerarrows;
 
+import net.milkbowl.vault.economy.EconomyResponse;
+import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
+
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -9,8 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -24,12 +25,19 @@ public class EventListener implements Listener{
 	}
 	
 	
-	// set damage of special arrow
+	// set damage of special arrow on whitelisted entity
 	@EventHandler
 	public void actionPerformed(EntityDamageByEntityEvent e) {
 		if(e.getDamager() instanceof Projectile){
 			if(e.getDamager().hasMetadata("ohko")){
-				e.setDamage(plugin.arrowdamage);
+				if(e.getEntity() instanceof Player){
+					if(!plugin.bl_player.contains(((Player) e.getEntity()).getName())){
+						e.setDamage(plugin.arrowdamage);
+					}
+				}
+				else if(!plugin.bl_entity.contains(e.getEntity().getType())){
+					e.setDamage(plugin.arrowdamage);
+				}
 			}
 		}
 	}
@@ -40,7 +48,14 @@ public class EventListener implements Listener{
 	public void actionPerformed(EntityShootBowEvent e) {
 		if(e.getEntity() instanceof Player){
 			Player p = (Player) e.getEntity();
-			if(plugin.players.contains(p)){
+			if(plugin.allarrowscost){
+				EconomyResponse response = plugin.economy.withdrawPlayer(p, plugin.arrowcost);
+				if(response.type.equals(ResponseType.FAILURE) || response.type.equals(ResponseType.NOT_IMPLEMENTED)){
+					p.sendMessage(plugin.msg_eco);
+					e.setCancelled(true);
+				}
+			}
+			if(plugin.players.contains(p.getName())){
 				e.getProjectile().setMetadata("ohko", new FixedMetadataValue(plugin, true));
 				plugin.players.remove(p);
 				p.sendMessage(plugin.msg_arrow_shot);
@@ -48,24 +63,7 @@ public class EventListener implements Listener{
 		}
 	}
 	
-	
-   @EventHandler
-   public void restrictCrafting(PrepareItemCraftEvent e) {
-	   if (e.getView().getType() == InventoryType.WORKBENCH){
-		   boolean[] found = new boolean[9];
-		   
-		   for (ItemStack item: e.getInventory().getMatrix()) {
-			   //check crafting table ...
-		   }
-		   if (!found[0] || !found[1] || !found[2] || !found[3] || !found[4] || !found[5] || !found[6] || !found[7] || !found[8]) {
-			   e.getRecipe().getResult().setType(Material.AIR);
-		   }
-		   else{
-			   e.getRecipe().getResult().setType(Material.ARROW);
-		   }
-	   }
-   }
-	
+		
 	// equip dequip special arrow
 	@EventHandler
 	public void actionPerformed(PlayerInteractEvent e) {
@@ -73,9 +71,10 @@ public class EventListener implements Listener{
 		if(e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
 			if(p.getItemInHand().getType().equals(Material.ARROW)){
 				if(p.getItemInHand().getEnchantmentLevel(Enchantment.ARROW_DAMAGE) == 10){
-					if(plugin.players.contains(p)){
-						plugin.players.remove(p);
-						plugin.arrow(p);
+					if(plugin.players.contains(p.getName())){
+						plugin.players.remove(p.getName());
+						p.getInventory().addItem(plugin.arrow);
+						p.sendMessage(plugin.msg_arrow);
 						p.sendMessage(plugin.msg_arrow_dequip);
 					}
 					else{
@@ -86,7 +85,7 @@ public class EventListener implements Listener{
 						else{
 							item.setType(Material.AIR);
 						}
-						plugin.players.add(p);
+						plugin.players.add(p.getName());
 						p.sendMessage(plugin.msg_arrow_equip);
 					}
 				}
