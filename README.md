@@ -14,7 +14,7 @@ TODO:
 ======
 
 download: 
-http://custom-craft.de/owncloud/public.php?service=files&t=ab3003d132fc601743b66bef0d28f94b
+http://custom-craft.de/owncloud/public.php?service=files&t=ab3003d132fc601743b66bef0d28f94b              
 might not work yet ... need to be tested first !!!
 pw: PapiDimmi 
 
