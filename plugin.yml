@@ -5,6 +5,7 @@ version: 1.0
 author: DieFriiks
 authors: [DieFriiks, CustomCraftDev, undeaD_D]
 databse: false
+depend: [Vault]
 commands:
   ohko:
     usage: /<command> <reload/disable/reset/give> [<player>]
