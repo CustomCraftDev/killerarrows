@@ -7,9 +7,16 @@ craft1: AIR DIAMOND AIR
 craft2: AIR STICK AIR
 craft3: AIR  FEATHER AIR
 
+all-arrows-ohko: false
+all-arrows-cost: false
+arrow-damage: 20.0
 arrow-cost: 100.0
-all-arrows: false
-arrow-damage: 20
+
+msg-eco-error: insufficient funds :(
+msg-arrow-bought: Your next shot will be a OHKO.
+msg-arrow-equip: Special Arrow equiped
+msg-arrow-dequip: Special Arrow dequiped
+msg-arrow-shot: Special Arrow shot
 
 blacklisted-entities:
   - ENDERCRYSTAL
@@ -22,4 +29,4 @@ blacklisted-players:
   - undeaD_D
   - undeaD_Bot
   - Notch
-debug: false
+players:
