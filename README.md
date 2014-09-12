@@ -8,14 +8,16 @@ requested Plugin
 for: PapiDimmi    
 
 ======
-TODO:
-  - testing the plugin
+Problem:
+  - Bukkits custom recipes bug out
+    - crafted arrows CAN be stacked 
+      - if crafted stack is equiped, all arrows will be erased ...
+        - added warning to item lore for users ... 
 
 ======
 
 download: 
 http://custom-craft.de/owncloud/public.php?service=files&t=ab3003d132fc601743b66bef0d28f94b              
-might not work yet ... need to be tested first !!!                                                            
 pw: PapiDimmi 
 
 ======
