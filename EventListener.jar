@@ -57,7 +57,7 @@ public class EventListener implements Listener{
 			}
 			if(plugin.players.contains(p.getName())){
 				e.getProjectile().setMetadata("ohko", new FixedMetadataValue(plugin, true));
-				plugin.players.remove(p);
+				plugin.players.remove(p.getName());
 				p.sendMessage(plugin.msg_arrow_shot);
 			}
 		}
@@ -72,19 +72,12 @@ public class EventListener implements Listener{
 			if(p.getItemInHand().getType().equals(Material.ARROW)){
 				if(p.getItemInHand().getEnchantmentLevel(Enchantment.ARROW_DAMAGE) == 10){
 					if(plugin.players.contains(p.getName())){
-						plugin.players.remove(p.getName());
-						p.getInventory().addItem(plugin.arrow);
-						p.sendMessage(plugin.msg_arrow);
 						p.sendMessage(plugin.msg_arrow_dequip);
 					}
 					else{
 						ItemStack item = p.getItemInHand();
-						if(item.getAmount() > 1){
-							item.setAmount(item.getAmount() - 1);
-						}
-						else{
-							item.setType(Material.AIR);
-						}
+							item = new ItemStack(Material.ARROW);
+							p.setItemInHand(item);
 						plugin.players.add(p.getName());
 						p.sendMessage(plugin.msg_arrow_equip);
 					}
