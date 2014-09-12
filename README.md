@@ -8,17 +8,12 @@ for: PapiDimmi
 
 ======
 TODO:
-  - crafting event
-  - saving player with arrow equipped in config ondisable()
-  - charge money on normal shot too ( i dont like this feature :/ )
-  - code optimizations
   - testing the plugin
-  - testing with economy :P
 
 ======
 
 download: 
-COMMING SOON                                                                                          
+http://custom-craft.de/owncloud/public.php?service=files&t=ab3003d132fc601743b66bef0d28f94b                                                                                   
 pw: PapiDimmi 
 
 ======
