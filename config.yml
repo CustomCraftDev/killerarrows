@@ -3,9 +3,9 @@
 # @github https://github.com/CustomCraftDev/killerarrows
 
 enable-crafting: true
-craft1: AIR DIAMOND AIR
-craft2: AIR STICK AIR
-craft3: AIR  FEATHER AIR
+craft1: DIAMOND
+craft2: STICK
+craft3: FEATHER
 
 all-arrows-ohko: false
 all-arrows-cost: false
@@ -13,18 +13,17 @@ arrow-damage: 20.0
 arrow-cost: 100.0
 
 msg-eco-error: insufficient funds :(
-msg-arrow-bought: Your next shot will be a OHKO.
+msg-arrow-bought: OHKO Arrow bought.
 msg-arrow-equip: Special Arrow equiped
-msg-arrow-dequip: Special Arrow dequiped
+msg-arrow-dequip: Special Arrow already equiped
 msg-arrow-shot: Special Arrow shot
 
 blacklisted-entities:
-  - ENDERCRYSTAL
-  - ENDERDRAGON
-  - ENDERDRAGONPART
+  - ENDER_CRYSTAL
+  - ENDER_DRAGON
   - GIANT
   - WITHER
-  - WITHERSKULL
+  - WITHER_SKULL
 blacklisted-players:
   - undeaD_D
   - undeaD_Bot
