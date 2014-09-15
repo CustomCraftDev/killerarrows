@@ -2,21 +2,38 @@
 # @link www.custom-craft.de
 # @github https://github.com/CustomCraftDev/killerarrows
 
-enable-crafting: true
-craft1: DIAMOND
-craft2: STICK
-craft3: FEATHER
+crafting:
+  enable: true
+  craft1: DIAMOND
+  craft2: STICK
+  craft3: FEATHER
 
-all-arrows-ohko: false
-all-arrows-cost: false
-arrow-damage: 20.0
-arrow-cost: 100.0
+info-only:
+  var0: 'these things only work on messages (only var1 and var4 work on ohko-arrow)'
+  var1: 'colorcodes: https://github.com/CustomCraftDev/perplayercommands'
+  var2: '%playername% gets replaced with the name of the player'
+  var3: '%world% gets replaced with the world the player is currently in'
+  var4: '%nextline% indicates a new line in the chat'
+  var5: '%no% indicates that there should be nothing to be displayed'
 
-msg-eco-error: insufficient funds :(
-msg-arrow-bought: OHKO Arrow bought.
-msg-arrow-equip: Special Arrow equiped
-msg-arrow-dequip: Special Arrow already equiped
-msg-arrow-shot: Special Arrow shot
+ohko-arrow:
+  name: '&cOHKO Arrow'
+  lore: '&7When you hit someone with this arrow with a bow,%nextline%they will die instantly!%nextline%rightclick to equip/unequip%nextline%DO NOT STACK THEM !!!'
+  enchantment-lvl: 10
+  all-arrows-ohko: false
+  all-arrows-cost: false
+  arrow-damage: 20.0
+  arrow-cost: 100.0
+
+msg:
+  disable: '&c[KillerArrows] was disabled'
+  reset: '&c[KillerArrows] was reset'
+  reload: '&c[KillerArrows] was reloaded'
+  eco-error: insufficient funds :(
+  arrow-bought: OHKO Arrow bought.
+  arrow-equipped: Special Arrow equipped
+  arrow-dequipped: Special Arrow already equipped
+  arrow-shot: Special Arrow shot
 
 blacklisted-entities:
   - ENDER_CRYSTAL
