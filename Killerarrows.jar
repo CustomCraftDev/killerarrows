@@ -40,9 +40,17 @@ public class Killerarrows extends JavaPlugin {
 	boolean allarrowscost;
 	boolean crafting;
 	boolean useeco;
+	boolean isplayer;
 	int arrowcost;
+	int arrow_lvl;
 	double arrowdamage;
-	
+
+	String msg_noperm;
+	String arrow_name;
+	String arrow_lore;
+	String msg_disable;
+	String msg_reset;
+	String msg_reload;
 	String msg_eco;
 	String msg_arrow;
 	String msg_arrow_equip;
@@ -53,6 +61,7 @@ public class Killerarrows extends JavaPlugin {
 	List<String> bl_player;
 	ArrayList<EntityType> bl_entity;
 	List<String> bl_entity_config;
+
 
 	
 	/**
@@ -90,68 +99,131 @@ public class Killerarrows extends JavaPlugin {
      * @return true or false
      */
 	public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
+		isplayer = false;
+		Player p = null;
+		
 		if ((sender instanceof Player)) {
-			Player p = (Player)sender;
-
+			p = (Player)sender;
+			isplayer = true;
+		}
 			if(cmd.getName().equalsIgnoreCase("ohko") && args.length != 0){
 				
 				// give
 				if(args[0].equalsIgnoreCase("give")){
-					if(args.length > 1){
-						if(p.hasPermission("ohko.give.others")){
-							Player target = this.getServer().getPlayer(args[1]);
-							if(target != null && target.isOnline()){
-							  return give(target, true);
+					if(isplayer){
+						if(args.length > 1){
+							if(p.hasPermission("ohko.give.others")){
+								Player target = this.getServer().getPlayer(args[1]);
+								if(target != null && target.isOnline()){
+								  return give(target, true);
+								}
+							}
+							else{
+								p.sendMessage(msg_noperm);
+								return true;
+							}
+						}
+						else{
+							if(p.hasPermission("ohko.give.self")){
+								return give(p, false);
+							}
+							else{
+								p.sendMessage(msg_noperm);
+								return true;
 							}
 						}
 					}
 					else{
-						if(p.hasPermission("ohko.give.self")){
-							return give(p, false);
+						if(args.length > 1){
+							Player target = this.getServer().getPlayer(args[1]);
+							if(target != null && target.isOnline()){
+								  return give(target, true);
+							}
+							return true;
+						}
+						else{
+							System.out.println("/ohko give <player>");
+							return true;
 						}
 					}
 				}
 				
 				// disable
-				if(args[0].equalsIgnoreCase("disable") && p.hasPermission("ohko.disable")){
-						this.setEnabled(false);
-						p.sendMessage(ChatColor.RED + "[KillerArrows] was disabled");
-						say("disabled by " + p.getName());
-					return true;
+				if(args[0].equalsIgnoreCase("disable")){
+					if(isplayer){
+						if(p.hasPermission("ohko.disable")){
+							this.setEnabled(false);
+							p.sendMessage(msg_disable);
+							say("disabled by " + p.getName());
+						return true;
+					}
+						else{
+							p.sendMessage(msg_noperm);
+							return true;
+						}
+					}
+					else{
+							this.setEnabled(false);
+						System.out.println(msg_disable);
+						return true;
+					}
 				}
 				
 				// reset
-				if(args[0].equalsIgnoreCase("reset") && p.hasPermission("ohko.reset")){
+				if(args[0].equalsIgnoreCase("reset")){
+					if(isplayer){
+						if(p.hasPermission("ohko.reset")){
+						    File configFile = new File(getDataFolder(), "config.yml");
+						    configFile.delete();
+						    saveDefaultConfig();
+							p.sendMessage(msg_reset);
+						    reload();
+							p.sendMessage(msg_reload);
+							say("reset by " + p.getName());
+						return true;
+						}
+						else{
+							p.sendMessage(msg_noperm);
+							return true;
+						}
+					}
+					else{
 					    File configFile = new File(getDataFolder(), "config.yml");
 					    configFile.delete();
 					    saveDefaultConfig();
-						p.sendMessage(ChatColor.RED + "[KillerArrows] config reset");
+					    System.out.println(msg_reset);
 					    reload();
-						p.sendMessage(ChatColor.RED + "[KillerArrows] was reloaded");
-						say("reset by " + p.getName());
-					return true;
+					    System.out.println(msg_reload);
+					    return true;
+					}
 				}
 				
 				// reload
-				if(args[0].equalsIgnoreCase("reload") && p.hasPermission("ohko.reload")){
-						reload();
-						p.sendMessage(ChatColor.RED + "[KillerArrows] was reloaded");
-						say("reloaded by " + p.getName());
-					return true;
+				if(args[0].equalsIgnoreCase("reload")){
+					if(isplayer){
+						if(p.hasPermission("ohko.reload")){
+							reload();
+							p.sendMessage(msg_reload);
+							say("reloaded by " + p.getName());
+						return true;
+					}
+						else{
+							p.sendMessage(msg_noperm);
+							return true;
+						}
+					}
+					else{
+						    reload();
+					    System.out.println(msg_reload);
+						return true;
+				    }
 				}
 			}
-		}
-		
-		// commands from console
-		else{
-			System.out.println("[KillerArrows] Command ingame only ...");
-			return true;
-		}
 		
 		// nothing to do here \o/
 		return false;
 	}
-	
+					
 	
 	/*
 	 *  setup Economy with vault
@@ -185,16 +257,16 @@ public class Killerarrows extends JavaPlugin {
 		}
 		
 		ItemStack arrow = new ItemStack(Material.ARROW, 1);
-		arrow.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 10);
+		arrow.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, arrow_lvl);
 		ItemMeta m = arrow.getItemMeta();
 				List<String> lore = new ArrayList<String>();
-				lore.add(ChatColor.GRAY + "When you hit someone with this arrow with a bow,");
-				lore.add(ChatColor.GRAY + "they will die instantly!");
-				lore.add(ChatColor.GRAY + "rightclick to equip/unequip");
-				lore.add(ChatColor.RED + "DO NOT STACK THEM !!!");
+				String[] lore2 = arrow_lore.split("%nextline%");
+				for(int i = 0; i < lore2.length; i++){
+					lore.add(ChatColor.translateAlternateColorCodes('&', lore2[i]));
+				}
 				lore.add(ChatColor.GRAY + "Arrow number: " + sb.toString());
 			m.setLore(lore);
-			m.setDisplayName(ChatColor.RED + "OHKO Arrow");
+			m.setDisplayName(arrow_name);
 			arrow.setItemMeta(m);
 		return arrow;
     }
@@ -231,22 +303,58 @@ public class Killerarrows extends JavaPlugin {
 		config.options().copyDefaults(true);
 		saveConfig();
 		
-		allarrowsohko = config.getBoolean("all-arrows-ohko");
-		allarrowscost = config.getBoolean("all-arrows-cost");
-		arrowdamage = config.getDouble("arrow-damage");
-		arrowcost = config.getInt("arrow-cost");
-		msg_eco = config.getString("msg-eco-error");
-		msg_arrow = config.getString("msg-arrow-bought");
-		msg_arrow_equip = config.getString("msg-arrow-equip");
-		msg_arrow_dequip = config.getString("msg-arrow-dequip");
-		msg_arrow_shot = config.getString("msg-arrow-shot");
-		crafting = config.getBoolean("enable-crafting");
+		arrow_name = ChatColor.translateAlternateColorCodes('&', config.getString("ohko-arrow.name"));
+		arrow_lore = config.getString("ohko-arrow.lore");
+		arrow_lvl = config.getInt("ohko-arrow.enchantment-lvl");
+		allarrowsohko = config.getBoolean("ohko-arrow.all-arrows-ohko");
+		allarrowscost = config.getBoolean("ohko-arrow.all-arrows-cost");
+		arrowdamage = config.getDouble("ohko-arrow.arrow-damage");
+		arrowcost = config.getInt("ohko-arrow.arrow-cost");
 		
+		msg_noperm = ChatColor.translateAlternateColorCodes('&', config.getString("msg.nopermission"));
+		if(msg_noperm.startsWith("%no%")){
+			msg_noperm = "";
+		}
+		
+		msg_disable = ChatColor.translateAlternateColorCodes('&', config.getString("msg.disable"));
+		if(msg_disable.startsWith("%no%")){
+			msg_disable = "";
+		}
+		msg_reset = ChatColor.translateAlternateColorCodes('&', config.getString("msg.reset"));
+		if(msg_reset.startsWith("%no%")){
+			msg_reset = "";
+		}
+		msg_reload = ChatColor.translateAlternateColorCodes('&', config.getString("msg.reload"));
+		if(msg_reload.startsWith("%no%")){
+			msg_reload = "";
+		}
+		msg_eco = ChatColor.translateAlternateColorCodes('&', config.getString("msg.eco-error"));
+		if(msg_eco.startsWith("%no%")){
+			msg_eco = "";
+		}
+		msg_arrow = ChatColor.translateAlternateColorCodes('&', config.getString("msg.arrow-bought"));
+		if(msg_arrow.startsWith("%no%")){
+			msg_arrow = "";
+		}
+		msg_arrow_equip = ChatColor.translateAlternateColorCodes('&', config.getString("msg.arrow-equipped"));
+		if(msg_arrow_equip.startsWith("%no%")){
+			msg_arrow_equip = "";
+		}
+		msg_arrow_dequip = ChatColor.translateAlternateColorCodes('&', config.getString("msg.arrow-dequipped"));
+		if(msg_arrow_dequip.startsWith("%no%")){
+			msg_arrow_dequip = "";
+		}
+		msg_arrow_shot = ChatColor.translateAlternateColorCodes('&', config.getString("msg.arrow-shot"));
+		if(msg_arrow_shot.startsWith("%no%")){
+			msg_arrow_shot = "";
+		}
+
+		crafting = config.getBoolean("crafting.enable");		
 		if(crafting){
 			craft = new Material[3];
-				craft[0] = Material.valueOf(config.getString("craft1"));
-				craft[1] = Material.valueOf(config.getString("craft2"));
-				craft[2] = Material.valueOf(config.getString("craft3"));
+				craft[0] = Material.valueOf(config.getString("crafting.craft1"));
+				craft[1] = Material.valueOf(config.getString("crafting.craft2"));
+				craft[2] = Material.valueOf(config.getString("crafting.craft3"));
 			ShapedRecipe arrowrecipe = new ShapedRecipe(randomarrow()).shape(" a ", " b ", " c ").setIngredient('a', craft[0]).setIngredient('b', craft[1]).setIngredient('c', craft[2]);
 			this.getServer().addRecipe(arrowrecipe);
 		}
@@ -273,6 +381,11 @@ public class Killerarrows extends JavaPlugin {
 			    economy = null;
 			    craft = null;
 			    
+			    arrow_name = null;
+			    arrow_lore = null;
+			    msg_disable = null;
+			    msg_reset = null;
+			    msg_reload = null;
 				msg_eco = null;
 				msg_arrow = null;
 				msg_arrow_equip = null;
