@@ -8,11 +8,9 @@ requested Plugin
 for: PapiDimmi    
 
 ======
-Problem:
-  - Bukkits custom recipes bug out
-    - crafted arrows CAN be stacked 
-      - if crafted stack is equiped, all arrows will be erased ...
-        - added warning to item lore for users ... 
+UPDATE:
+  - edited config.yml (added more options/messages)
+  - currently adding console support for /ohko <reload> <reset> <disable> and <give(*others only)>
   - pm me on bukkit if anything is not working ...
 
 ======
