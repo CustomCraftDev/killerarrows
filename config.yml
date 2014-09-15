@@ -2,6 +2,7 @@
 # @link www.custom-craft.de
 # @github https://github.com/CustomCraftDev/killerarrows
 
+debug: false
 crafting:
   enable: true
   craft1: DIAMOND
@@ -11,8 +12,6 @@ crafting:
 info-only:
   var0: 'these things only work on messages (only var1 and var4 work on ohko-arrow)'
   var1: 'colorcodes: https://github.com/CustomCraftDev/perplayercommands'
-  var2: '%playername% gets replaced with the name of the player'
-  var3: '%world% gets replaced with the world the player is currently in'
   var4: '%nextline% indicates a new line in the chat'
   var5: '%no% indicates that there should be nothing to be displayed'
 
@@ -26,6 +25,7 @@ ohko-arrow:
   arrow-cost: 100.0
 
 msg:
+  nopermission: '&c[KillerArrows] you dont have permission to that command'
   disable: '&c[KillerArrows] was disabled'
   reset: '&c[KillerArrows] was reset'
   reload: '&c[KillerArrows] was reloaded'
