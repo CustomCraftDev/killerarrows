@@ -18,8 +18,8 @@ UPDATE:
 ======
 
 download: 
-not ready yet ...
-pw: PapiDimmi 
+not ready yet ...                                                                                          
+owncloud password: PapiDimmi 
 
 ======
 
