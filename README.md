@@ -8,8 +8,8 @@ requested Plugin
 for: PapiDimmi    
 
 ======
+FINISHED ...
 UPDATE:
-  - currently testing for bugs ...
   - edited config.yml (added more options/messages/colorcodes)
   - added console support for /ohko <reload> <reset> <disable> and <give(*others only)>
   - pm me on bukkit if anything is not working ...
